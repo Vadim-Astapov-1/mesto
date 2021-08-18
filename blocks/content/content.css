@@ -1,0 +1,17 @@
+.content {
+  max-width: 880px;
+  margin: 40px auto 0;
+}
+
+@media all and (max-width: 1024px) {
+  .content {
+    max-width: calc(100% - 76px);
+  }
+}
+
+@media all and (max-width: 425px) {
+  .content {
+    max-width: calc(100% - 38px);
+    margin: 42px 19px 0;
+  }
+}
