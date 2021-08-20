@@ -13,8 +13,11 @@ let nameProfile = content.querySelector('.profile__name');
 let jobProfile = content.querySelector('.profile__job');
 
 // В момент открытия попапа данные из профиля должны вставляться в форму.
-function editProfile(nameProfile, jobProfile) {
+function editProfile() {
   popup.classList.add('popup_opened');
+
+  nameProfile.textContent = nameInput.value;
+  jobProfile.textContent = jobInput.value;
 }
 
 function closeProfile() {
