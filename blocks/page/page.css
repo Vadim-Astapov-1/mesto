@@ -4,4 +4,6 @@
   -webkit-font-smoothing: antialiased;
   background-color: #000;
   margin: 0 auto;
+  /* Адекватная страница без карточек */
+  min-height: 100vh;
 }
