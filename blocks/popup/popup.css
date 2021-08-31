@@ -1,6 +1,9 @@
 .popup {
   position: fixed;
-  display: none;
+  /* visibility делает элемент просто невидемым в отличии
+  от display: none, который удалял его из разметки*/
+  visibility: hidden;
+  display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
@@ -10,4 +13,6 @@
   left: 0;
   /* Fix - Квадрат кнопки был виден */
   z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s linear;
 }

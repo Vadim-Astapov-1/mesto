@@ -1,7 +1,5 @@
-.element {
+.popup__card {
   display: flex;
   flex-direction: column;
-  border-radius: 10px;
-  background-color: #fff;
   position: relative;
 }
