@@ -53,15 +53,12 @@ const initialCards = [
 ];
 
 // В момент открытия попапа данные из профиля должны вставляться в форму.
-function editProfile() {
-  editPopup.classList.add('popup_opened');
-
-  nameInput.value = nameProfile.textContent;
-  jobInput.value = jobProfile.textContent;
+function openPopup(popup) {
+  popup.classList.add('popup_opened');
 }
 
-function closeProfile() {
-  editPopup.classList.remove('popup_opened');
+function closePopup(popup) {
+  popup.classList.remove('popup_opened');
 }
 
 // Обработчик «отправки» формы, хотя пока
@@ -76,33 +73,25 @@ function formSubmitHandler (evt) {
     jobProfile.textContent = jobInput.value;
 
     // Закрытие popup
-    closeProfile();
+    closePopup(editPopup);
 }
 
-function openCardCreator() {
-  addPopup.classList.add('popup_opened');
-}
-
-function closeCardCreator() {
-  addPopup.classList.remove('popup_opened');
-}
-
-
-function createCard(item) {
+// Отдельная функция создания карточки
+function createCard(name, link) {
   const elementTemplate = document.querySelector('.element-template').content;
   // Замечание на будущее: ".element" находиться больше не в document, а в elementTemplate!!!
   const cardElement = elementTemplate.querySelector('.element').cloneNode(true);
 
-  cardElement.querySelector('.element__image').src = item.link;
-  cardElement.querySelector('.element__image').alt = item.name;
-  cardElement.querySelector('.element__title').textContent = item.name;
+  cardElement.querySelector('.element__image').src = link;
+  cardElement.querySelector('.element__image').alt = name;
+  cardElement.querySelector('.element__title').textContent = name;
 
   cardElement.querySelector('.element__image').addEventListener('click', function () {
-    popupCard.src = cardElement.querySelector('.element__image').src;
-    popupCard.alt = cardElement.querySelector('.element__title').textContent;
-    popupTitleCard.textContent = cardElement.querySelector('.element__title').textContent;
+    popupCard.src = link;
+    popupCard.alt = name;
+    popupTitleCard.textContent = name;
 
-    cardPopup.classList.add('popup_opened');
+    openPopup(cardPopup);
   });
 
   cardElement.querySelector('.element__remove-button').addEventListener('click', function () {
@@ -113,26 +102,41 @@ function createCard(item) {
     evt.target.classList.toggle('element__like-button_active');
   });
 
-  elements.prepend(cardElement);
+  closePopup(addPopup);
 
-  closeCardCreator();
+  return cardElement;
 }
 
-function closeImagePopup() {
-  cardPopup.classList.remove('popup_opened');
+// Отдельная функция добавления
+function addCard(elements, cardElement) {
+  elements.prepend(cardElement);
 }
 
 // Первые 6 карточек
-initialCards.forEach(createCard);
+initialCards.forEach(function (item) {
+  addCard(elements, createCard(item.name, item.link));
+});
 
-editButton.addEventListener('click', editProfile);
-closeButtonEdit.addEventListener('click', closeProfile);
+editButton.addEventListener('click', function() {
+  openPopup(editPopup);
+
+  // В момент открытия попапа данные из профиля должны вставляться в форму.
+  nameInput.value = nameProfile.textContent;
+  jobInput.value = jobProfile.textContent;
+});
+closeButtonEdit.addEventListener('click', function() {
+  closePopup(editPopup);
+});
 // Прикрепляем обработчик к форме:
 // он будет следить за событием “submit” - «отправка»
 formEdit.addEventListener('submit', formSubmitHandler);
 
-addButton.addEventListener('click', openCardCreator);
-closeButtonAdd.addEventListener('click', closeCardCreator);
+addButton.addEventListener('click', function() {
+  openPopup(addPopup);
+});
+closeButtonAdd.addEventListener('click', function() {
+  closePopup(addPopup);
+});
 formAdd.addEventListener('submit', function (evt) {
   evt.preventDefault();
 
@@ -145,12 +149,15 @@ formAdd.addEventListener('submit', function (evt) {
     link: link.value
   };
 
-  createCard(card);
+  // Добавим карточку
+  addCard(elements, createCard(card.name, card.link));
 
-  name.value = '';
-  link.value = '';
+  //Очищение формы лучше реализовать с помощью встроенного метода reset, очищающего всю форму
+  formAdd.reset();
 });
 
-closeButtonCard.addEventListener('click', closeImagePopup);
+closeButtonCard.addEventListener('click', function() {
+  closePopup(cardPopup);
+});
 
 

@@ -43,7 +43,8 @@
           <form class="popup__form popup__form_type_add" name="popupCreateCardForm">
             <h2 class="popup__title">Новое место</h2>
             <input type="text" placeholder="Название" class="popup__input popup__input_type_place-name" name="popupCreatecardName" required>
-            <input type="text" placeholder="Ссылка на картинку" class="popup__input popup__input_type_place-link" name="popupCreateCardLink" required>
+            <!-- input должен принимать только ссылки, для это есть type="url" -->
+            <input type="url" placeholder="Ссылка на картинку" class="popup__input popup__input_type_place-link" name="popupCreateCardLink" required>
             <button class="popup__save-button" type="submit">Создать</button>
           </form>
         </div>
