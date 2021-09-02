@@ -102,8 +102,6 @@ function createCard(name, link) {
     evt.target.classList.toggle('element__like-button_active');
   });
 
-  closePopup(addPopup);
-
   return cardElement;
 }
 
@@ -151,6 +149,8 @@ formAdd.addEventListener('submit', function (evt) {
 
   // Добавим карточку
   addCard(elements, createCard(card.name, card.link));
+
+  closePopup(addPopup);
 
   //Очищение формы лучше реализовать с помощью встроенного метода reset, очищающего всю форму
   formAdd.reset();
