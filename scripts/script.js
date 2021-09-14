@@ -1,4 +1,7 @@
 // Переменные надо собирать сверху
+const page = document.querySelector('.page');
+const popups = document.querySelectorAll('.popup');
+
 const editPopup = document.querySelector('.popup_type_edit');
 const editButton = document.querySelector('.profile__edit-button');
 const closeButtonEdit = document.querySelector('.popup__close-button_type_edit');
@@ -61,6 +64,16 @@ function closePopup(popup) {
   popup.classList.remove('popup_opened');
 }
 
+const closePopupEsc = (evt) => {
+  if(evt.key === 'Escape') {
+    popups.forEach(function (item) {
+      if(item.classList.contains('popup_opened')) {
+        closePopup(item);
+      }
+    });
+  }
+};
+
 // Обработчик «отправки» формы, хотя пока
 // она никуда отправляться не будет
 function formSubmitHandler (evt) {
@@ -122,9 +135,11 @@ editButton.addEventListener('click', function() {
   nameInput.value = nameProfile.textContent;
   jobInput.value = jobProfile.textContent;
 });
+
 closeButtonEdit.addEventListener('click', function() {
   closePopup(editPopup);
 });
+
 // Прикрепляем обработчик к форме:
 // он будет следить за событием “submit” - «отправка»
 formEdit.addEventListener('submit', formSubmitHandler);
@@ -132,16 +147,18 @@ formEdit.addEventListener('submit', formSubmitHandler);
 addButton.addEventListener('click', function() {
   openPopup(addPopup);
 });
+
 closeButtonAdd.addEventListener('click', function() {
   closePopup(addPopup);
 });
+
 formAdd.addEventListener('submit', function (evt) {
   evt.preventDefault();
 
   const name = document.querySelector('.popup__input_type_place-name');
   const link = document.querySelector('.popup__input_type_place-link');
 
-  // Делаем массив
+  // Делаем обьект
   const card = {
     name: name.value,
     link: link.value
@@ -160,4 +177,11 @@ closeButtonCard.addEventListener('click', function() {
   closePopup(cardPopup);
 });
 
+// Закрытие popupов при нажатие на overlay.
+popups.forEach( function(item) {
+  item.addEventListener('click', function (evt) {
+    closePopup(evt.target);
+  });
+});
 
+document.addEventListener('keydown', closePopupEsc);
