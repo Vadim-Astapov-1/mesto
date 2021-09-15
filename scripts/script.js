@@ -78,7 +78,6 @@ const closePopupEsc = (evt) => {
         closePopup(item);
       }
     });
-    console.log('keydown в popup сработал');
   }
 };
 
