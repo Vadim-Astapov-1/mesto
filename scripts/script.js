@@ -1,5 +1,4 @@
 // Переменные надо собирать сверху
-const page = document.querySelector('.page');
 const popups = document.querySelectorAll('.popup');
 
 const editPopup = document.querySelector('.popup_type_edit');
@@ -17,6 +16,7 @@ const closeButtonAdd = document.querySelector('.popup__close-button_type_add');
 const formAdd = document.querySelector('.popup__form_type_add');
 const namePlaceInput = document.querySelector('.popup__input_type_place-name');
 const linkPlaceInput = document.querySelector('.popup__input_type_place-link');
+const createCardButton = document.querySelector('.popup__save-button_type_create');
 
 const cardPopup = document.querySelector('.popup_type_card');
 const closeButtonCard = document.querySelector('.popup__close-button_type_card');
@@ -55,13 +55,20 @@ const initialCards = [
   }
 ];
 
+function disableButton (button) {
+  button.classList.add('popup__save-button_inactive');
+}
+
 // В момент открытия попапа данные из профиля должны вставляться в форму.
 function openPopup(popup) {
   popup.classList.add('popup_opened');
+  document.addEventListener('keydown', closePopupEsc);
 }
 
 function closePopup(popup) {
   popup.classList.remove('popup_opened');
+  // С click все работает верно, функция closePopupEsc удаляется. С keydown начинает работать некорректно. При нажатии на что-то closePopupEsc не работает и не закроет попап.
+  document.removeEventListener('click', closePopupEsc);
 }
 
 const closePopupEsc = (evt) => {
@@ -71,6 +78,7 @@ const closePopupEsc = (evt) => {
         closePopup(item);
       }
     });
+    console.log('keydown в popup сработал');
   }
 };
 
@@ -94,12 +102,13 @@ function createCard(name, link) {
   const elementTemplate = document.querySelector('.element-template').content;
   // Замечание на будущее: ".element" находиться больше не в document, а в elementTemplate!!!
   const cardElement = elementTemplate.querySelector('.element').cloneNode(true);
+  const cardImage = cardElement.querySelector('.element__image');
 
-  cardElement.querySelector('.element__image').src = link;
-  cardElement.querySelector('.element__image').alt = name;
+  cardImage.src = link;
+  cardImage.alt = name;
   cardElement.querySelector('.element__title').textContent = name;
 
-  cardElement.querySelector('.element__image').addEventListener('click', function () {
+  cardImage.addEventListener('click', function () {
     popupCard.src = link;
     popupCard.alt = name;
     popupTitleCard.textContent = name;
@@ -155,13 +164,10 @@ closeButtonAdd.addEventListener('click', function() {
 formAdd.addEventListener('submit', function (evt) {
   evt.preventDefault();
 
-  const name = document.querySelector('.popup__input_type_place-name');
-  const link = document.querySelector('.popup__input_type_place-link');
-
   // Делаем обьект
   const card = {
-    name: name.value,
-    link: link.value
+    name: namePlaceInput.value,
+    link: linkPlaceInput.value
   };
 
   // Добавим карточку
@@ -171,6 +177,7 @@ formAdd.addEventListener('submit', function (evt) {
 
   //Очищение формы лучше реализовать с помощью встроенного метода reset, очищающего всю форму
   formAdd.reset();
+  disableButton(createCardButton);
 });
 
 closeButtonCard.addEventListener('click', function() {
@@ -184,4 +191,3 @@ popups.forEach( function(item) {
   });
 });
 
-document.addEventListener('keydown', closePopupEsc);

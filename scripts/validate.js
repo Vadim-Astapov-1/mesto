@@ -44,12 +44,12 @@ const hasNotInputValue = (inputList) => {
   })
 };
 
-// Функция вкл кнопки
+// Функция выкл кнопки
 const disableSubmitButton = (buttonElement, inactiveButtonClass) => {
   buttonElement.classList.add(inactiveButtonClass);
 };
 
-// Функция выкл кнопки
+// Функция вкл кнопки
 const enableSubmitButton = (buttonElement, inactiveButtonClass) => {
   buttonElement.classList.remove(inactiveButtonClass);
 };
@@ -107,6 +107,5 @@ enableValidation({
   inputErrorClass: 'popup__input_type_error',
   errorClass: 'popup__input-error_active'
 });
-
 
 
