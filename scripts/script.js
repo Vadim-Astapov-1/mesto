@@ -1,9 +1,8 @@
 // Переменные надо собирать сверху
-const popups = document.querySelectorAll('.popup');
+const popupList = document.querySelectorAll('.popup');
 
 const editPopup = document.querySelector('.popup_type_edit');
 const editButton = document.querySelector('.profile__edit-button');
-const closeButtonEdit = document.querySelector('.popup__close-button_type_edit');
 // Находим форму в DOM
 const formEdit = document.querySelector('.popup__form_type_edit');
 // Находим поля формы в DOM
@@ -12,14 +11,12 @@ const jobInput = document.querySelector('.popup__input_type_job');
 
 const addPopup = document.querySelector('.popup_type_add');
 const addButton = document.querySelector('.profile__add-button');
-const closeButtonAdd = document.querySelector('.popup__close-button_type_add');
 const formAdd = document.querySelector('.popup__form_type_add');
 const namePlaceInput = document.querySelector('.popup__input_type_place-name');
 const linkPlaceInput = document.querySelector('.popup__input_type_place-link');
 const createCardButton = document.querySelector('.popup__save-button_type_create');
 
 const cardPopup = document.querySelector('.popup_type_card');
-const closeButtonCard = document.querySelector('.popup__close-button_type_card');
 const popupCard = document.querySelector('.popup__image');
 const popupTitleCard = document.querySelector('.popup__title-card');
 
@@ -67,18 +64,16 @@ function openPopup(popup) {
 
 function closePopup(popup) {
   popup.classList.remove('popup_opened');
-  // С click все работает верно, функция closePopupEsc удаляется. С keydown начинает работать некорректно. При нажатии на что-то closePopupEsc не работает и не закроет попап.
-  document.removeEventListener('click', closePopupEsc);
+  document.removeEventListener('keydown', closePopupEsc);
 }
 
 const closePopupEsc = (evt) => {
   if(evt.key === 'Escape') {
-    popups.forEach(function (item) {
+    popupList.forEach(function (item) {
       if(item.classList.contains('popup_opened')) {
         closePopup(item);
       }
     });
-    console.log('keydown в popup сработал');
   }
 };
 
@@ -86,14 +81,11 @@ const closePopupEsc = (evt) => {
 // она никуда отправляться не будет
 function formSubmitHandler (evt) {
     evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы и перезапуск страницы
-                                                // Так мы можем определить свою логику отправки.
-                                                // О том, как это делать, расскажем позже.
 
     // Вставьте новые значения с помощью textContent
     nameProfile.textContent = nameInput.value;
     jobProfile.textContent = jobInput.value;
 
-    // Закрытие popup
     closePopup(editPopup);
 }
 
@@ -145,20 +137,12 @@ editButton.addEventListener('click', function() {
   jobInput.value = jobProfile.textContent;
 });
 
-closeButtonEdit.addEventListener('click', function() {
-  closePopup(editPopup);
-});
-
 // Прикрепляем обработчик к форме:
 // он будет следить за событием “submit” - «отправка»
 formEdit.addEventListener('submit', formSubmitHandler);
 
 addButton.addEventListener('click', function() {
   openPopup(addPopup);
-});
-
-closeButtonAdd.addEventListener('click', function() {
-  closePopup(addPopup);
 });
 
 formAdd.addEventListener('submit', function (evt) {
@@ -180,14 +164,17 @@ formAdd.addEventListener('submit', function (evt) {
   disableButton(createCardButton);
 });
 
-closeButtonCard.addEventListener('click', function() {
-  closePopup(cardPopup);
-});
-
-// Закрытие popupов при нажатие на overlay.
-popups.forEach( function(item) {
+// Вешаем обработчики событий на popupы
+popupList.forEach( function(item) {
   item.addEventListener('click', function (evt) {
-    closePopup(evt.target);
+    // Закрытие при нажатии на overlay
+    if (evt.target.classList.contains('popup_opened')) {
+      closePopup(item);
+    }
+
+    // Закрытие при нажатии на крестик
+    if (evt.target.classList.contains('popup__close-button')) {
+      closePopup(item);
+    }
   });
 });
-
