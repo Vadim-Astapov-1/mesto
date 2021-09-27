@@ -1,3 +1,5 @@
+import Card from './Card.js';
+import FormValidator  from './FormValidator.js';
 // Переменные надо собирать сверху
 const popupList = document.querySelectorAll('.popup');
 
@@ -16,14 +18,26 @@ const namePlaceInput = document.querySelector('.popup__input_type_place-name');
 const linkPlaceInput = document.querySelector('.popup__input_type_place-link');
 const createCardButton = document.querySelector('.popup__save-button_type_create');
 
-const cardPopup = document.querySelector('.popup_type_card');
-const popupCard = document.querySelector('.popup__image');
-const popupTitleCard = document.querySelector('.popup__title-card');
+export const cardPopup = document.querySelector('.popup_type_card');
+export const popupImageCard = document.querySelector('.popup__image');
+export const popupTitleCard = document.querySelector('.popup__title-card');
 
 const elements = document.querySelector('.elements');
 // Элементы, куда должны быть вставлены значения полей
 const nameProfile = document.querySelector('.profile__name');
 const jobProfile = document.querySelector('.profile__job');
+
+// Обьект для валидации
+const config = {
+  // formSelector больше не нужен
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__save-button',
+  inactiveButtonClass: 'popup__save-button_inactive',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__input-error_active'
+};
+
 // Массив карточек
 const initialCards = [
   {
@@ -56,8 +70,7 @@ function disableButton (button) {
   button.classList.add('popup__save-button_inactive');
 }
 
-// В момент открытия попапа данные из профиля должны вставляться в форму.
-function openPopup(popup) {
+export function openPopup(popup) {
   popup.classList.add('popup_opened');
   document.addEventListener('keydown', closePopupEsc);
 }
@@ -74,49 +87,18 @@ const closePopupEsc = (evt) => {
         closePopup(item);
       }
     });
+    console.log('hi');
   }
 };
 
-// Обработчик «отправки» формы, хотя пока
-// она никуда отправляться не будет
 function formSubmitHandler (evt) {
     evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы и перезапуск страницы
 
-    // Вставьте новые значения с помощью textContent
+    // Вставьте новые значения
     nameProfile.textContent = nameInput.value;
     jobProfile.textContent = jobInput.value;
 
     closePopup(editPopup);
-}
-
-// Отдельная функция создания карточки
-function createCard(name, link) {
-  const elementTemplate = document.querySelector('.element-template').content;
-  // Замечание на будущее: ".element" находиться больше не в document, а в elementTemplate!!!
-  const cardElement = elementTemplate.querySelector('.element').cloneNode(true);
-  const cardImage = cardElement.querySelector('.element__image');
-
-  cardImage.src = link;
-  cardImage.alt = name;
-  cardElement.querySelector('.element__title').textContent = name;
-
-  cardImage.addEventListener('click', function () {
-    popupCard.src = link;
-    popupCard.alt = name;
-    popupTitleCard.textContent = name;
-
-    openPopup(cardPopup);
-  });
-
-  cardElement.querySelector('.element__remove-button').addEventListener('click', function () {
-    cardElement.remove();
-  });
-
-  cardElement.querySelector('.element__like-button').addEventListener('click', function (evt) {
-    evt.target.classList.toggle('element__like-button_active');
-  });
-
-  return cardElement;
 }
 
 // Отдельная функция добавления
@@ -125,8 +107,9 @@ function addCard(elements, cardElement) {
 }
 
 // Первые 6 карточек
-initialCards.forEach(function (item) {
-  addCard(elements, createCard(item.name, item.link));
+initialCards.forEach((item) => {
+  const startingCards = new Card(item, '.element-template').generateCard();
+  addCard(elements, startingCards);
 });
 
 editButton.addEventListener('click', function() {
@@ -149,13 +132,15 @@ formAdd.addEventListener('submit', function (evt) {
   evt.preventDefault();
 
   // Делаем обьект
-  const card = {
+  const dataCard = {
     name: namePlaceInput.value,
     link: linkPlaceInput.value
   };
 
+  const card = new Card(dataCard, '.element-template').generateCard();
+
   // Добавим карточку
-  addCard(elements, createCard(card.name, card.link));
+  addCard(elements, card);
 
   closePopup(addPopup);
 
@@ -178,3 +163,7 @@ popupList.forEach( function(item) {
     }
   });
 });
+
+// Вкл валидации
+const validatorEditForm = new FormValidator(config, '.popup__form_type_edit').enableValidation();
+const validatorAddForm = new FormValidator(config, '.popup__form_type_add').enableValidation();
