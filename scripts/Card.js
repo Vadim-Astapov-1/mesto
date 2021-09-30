@@ -26,22 +26,16 @@ export default class Card {
   }
 
   _setEventListeners() {
-    this._element.addEventListener('click', (evt) => {
-      if(evt.target.classList.contains('element__like-button')) {
-        evt.target.classList.toggle('element__like-button_active');
-      }
+    this._element.querySelector('.element__like-button').addEventListener('click', (evt) => {
+      evt.target.classList.toggle('element__like-button_active');
     });
 
-    this._element.addEventListener('click', (evt) => {
-      if(evt.target.classList.contains('element__remove-button')) {
-        this._element.remove();
-      }
+    this._element.querySelector('.element__remove-button').addEventListener('click', () => {
+      this._element.remove();
     });
 
-    this._element.addEventListener('click', (evt) => {
-      if(evt.target.classList.contains('element__image')) {
-        this._handleOpenPopup();
-      }
+    this._element.querySelector('.element__image').addEventListener('click', () => {
+      this._handleOpenPopup();
     });
   }
 
