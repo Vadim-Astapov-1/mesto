@@ -64,8 +64,9 @@ export default class FormValidator {
     this._toggleButtonState();
 
     this._inputList.forEach(inputElement => {
-      // пришлось снова обьявить this._errorElement, не находился classList у this._errorElement.
-
+      // Был баг, что один из span ошибки не находился
+      // Перенес обьявление this._errorElement из _checkInputValidity в функции _hideInputError и _showInputError
+      // Или надо было бы обьявить здесь и в _checkInputValidity, решил лучше первый вариант
       this._hideInputError(inputElement);
     });
   }
