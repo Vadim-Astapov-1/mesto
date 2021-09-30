@@ -30,11 +30,15 @@ export default class Card {
       if(evt.target.classList.contains('element__like-button')) {
         evt.target.classList.toggle('element__like-button_active');
       }
+    });
 
+    this._element.addEventListener('click', (evt) => {
       if(evt.target.classList.contains('element__remove-button')) {
         this._element.remove();
       }
+    });
 
+    this._element.addEventListener('click', (evt) => {
       if(evt.target.classList.contains('element__image')) {
         this._handleOpenPopup();
       }
