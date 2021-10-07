@@ -1,5 +1,5 @@
-import Card from './Card.js';
-import FormValidator  from './FormValidator.js';
+import Card from '../scripts/Card.js';
+import FormValidator  from '../scripts/FormValidator.js';
 // Переменные надо собирать сверху
 const popupList = document.querySelectorAll('.popup');
 
