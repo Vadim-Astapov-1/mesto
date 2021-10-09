@@ -1,9 +1,12 @@
-import '../pages/index.css';
+//import '../pages/index.css';
 
 import Card from '../scripts/Card.js';
 import FormValidator  from '../scripts/FormValidator.js';
+import Section from '../scripts/Section.js';
+//import Popup from '../scripts/Popup.js';
+import PopupWithImage from '../scripts/PopupWithImage.js';
 // Переменные надо собирать сверху
-const popupList = document.querySelectorAll('.popup');
+export const popupList = document.querySelectorAll('.popup');
 
 const editPopup = document.querySelector('.popup_type_edit');
 const editButton = document.querySelector('.profile__edit-button');
@@ -101,20 +104,28 @@ function formSubmitHandler (evt) {
     closePopup(editPopup);
 }
 
-function createCard(configCard, cardSelector) {
-  const cardElement = new Card(configCard, cardSelector).generateCard();
-  return cardElement;
-}
-
-// Отдельная функция добавления
-function addCard(elements, cardElement) {
-  elements.prepend(cardElement);
-}
+//function createCard(configCard, cardSelector) {
+  //const cardElement = new Card(configCard, cardSelector).generateCard();
+  //return cardElement;
+//}
 
 // Первые 6 карточек
-initialCards.forEach((item) => {
-  addCard(elements, createCard(item, '.element-template'));
-});
+const initialCardList = new Section({
+  items: initialCards,
+  renderer: (item) => {
+    const initialCard = new Card({
+      data: item,
+      handleCardClick: () => {
+        const cardPopupTarget = new PopupWithImage(cardPopup);
+        cardPopupTarget.open(item);
+      }
+    }, '.element-template');
+    const initialCardElement = initialCard.generateCard();
+    initialCardList.addItem(initialCardElement);
+  }
+}, elements);
+
+initialCardList.renderItems();
 
 editButton.addEventListener('click', function() {
   openPopup(editPopup);
@@ -138,14 +149,28 @@ addButton.addEventListener('click', function() {
 formAdd.addEventListener('submit', function (evt) {
   evt.preventDefault();
 
-  // Делаем обьект
-  const dataCard = {
+  // Делаем массив с обьектом
+  const dataCard = [{
     name: namePlaceInput.value,
     link: linkPlaceInput.value
-  };
+  }];
 
-  // Добавим карточку
-  addCard(elements, createCard(dataCard, '.element-template'));
+  const cardElement = new Section({
+    items: dataCard,
+    renderer: (item) => {
+      const card = new Card({
+        data: item,
+        handleCardClick: () => {
+          const cardPopupTarget = new PopupWithImage(cardPopup);
+          cardPopupTarget.open(item);
+        }
+      }, '.element-template');
+      const createdCard = card.generateCard();
+      cardElement.addItem(createdCard);
+    }
+  }, elements);
+
+  cardElement.renderItems();
 
   closePopup(addPopup);
 
