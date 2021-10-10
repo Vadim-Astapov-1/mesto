@@ -3,8 +3,9 @@
 import Card from '../scripts/Card.js';
 import FormValidator  from '../scripts/FormValidator.js';
 import Section from '../scripts/Section.js';
-//import Popup from '../scripts/Popup.js';
+import Popup from '../scripts/Popup.js';
 import PopupWithImage from '../scripts/PopupWithImage.js';
+import PopupWithForm from '../scripts/PopupWithForm.js';
 // Переменные надо собирать сверху
 export const popupList = document.querySelectorAll('.popup');
 
@@ -109,6 +110,22 @@ function formSubmitHandler (evt) {
   //return cardElement;
 //}
 
+const popupWithCard = new PopupWithImage(cardPopup);
+popupWithCard.setEvetListeners();
+
+
+//const popupFormEdit = new PopupWithForm({
+  //selectorPopup: editPopup,
+  //handleFormSubmit: '',
+//});
+//popupFormEdit.setEvetListeners();
+
+//const popupFormAddCard = new PopupWithForm({
+  //selectorPopup: addPopup,
+  //handleFormSubmit: '',
+//});
+//PopupFormAddCard.setEvetListeners();
+
 // Первые 6 карточек
 const initialCardList = new Section({
   items: initialCards,
@@ -116,8 +133,7 @@ const initialCardList = new Section({
     const initialCard = new Card({
       data: item,
       handleCardClick: () => {
-        const cardPopupTarget = new PopupWithImage(cardPopup);
-        cardPopupTarget.open(item);
+        popupWithCard.open(item);
       }
     }, '.element-template');
     const initialCardElement = initialCard.generateCard();
@@ -150,27 +166,33 @@ formAdd.addEventListener('submit', function (evt) {
   evt.preventDefault();
 
   // Делаем массив с обьектом
-  const dataCard = [{
-    name: namePlaceInput.value,
-    link: linkPlaceInput.value
-  }];
+  //const dataCard = [{
+   // name: namePlaceInput.value,
+    //link: linkPlaceInput.value
+  //}];
 
-  const cardElement = new Section({
-    items: dataCard,
-    renderer: (item) => {
-      const card = new Card({
-        data: item,
-        handleCardClick: () => {
-          const cardPopupTarget = new PopupWithImage(cardPopup);
-          cardPopupTarget.open(item);
+  const form = new PopupWithForm({
+    selectorPopup: addPopup,
+    handleFormSubmit: (dataCard) => {
+      const cardElement = new Section({
+        items: dataCard,
+        renderer: (item) => {
+          const card = new Card({
+            data: item,
+            handleCardClick: () => {
+              popupWithCard.open(item);
+            }
+          }, '.element-template');
+          const createdCard = card.generateCard();
+          cardElement.addItem(createdCard);
         }
-      }, '.element-template');
-      const createdCard = card.generateCard();
-      cardElement.addItem(createdCard);
-    }
-  }, elements);
+      }, elements);
 
-  cardElement.renderItems();
+      cardElement.renderItems();
+    }
+  });
+
+
 
   closePopup(addPopup);
 
@@ -179,19 +201,7 @@ formAdd.addEventListener('submit', function (evt) {
 });
 
 // Вешаем обработчики событий на popupы
-popupList.forEach( function(item) {
-  item.addEventListener('click', function (evt) {
-    // Закрытие при нажатии на overlay
-    if (evt.target.classList.contains('popup_opened')) {
-      closePopup(item);
-    }
 
-    // Закрытие при нажатии на крестик
-    if (evt.target.classList.contains('popup__close-button')) {
-      closePopup(item);
-    }
-  });
-});
 
 // Вкл валидации
 validatorEditForm.enableValidation();

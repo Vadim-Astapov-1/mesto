@@ -21,12 +21,14 @@ export default class Popup {
   }
 
   setEvetListeners() {
-    this._popup.querySelector('.popup_opened').addEventListener('click', () => {
-      this._popup.close();
+    this._popup.addEventListener('click', (evt) => {
+      if(evt.target.classList.contains('popup_opened')) {
+        this.close();
+      }
     });
 
     this._popup.querySelector('.popup__close-button').addEventListener('click', () => {
-      this._popup.close();
+      this.close();
     });
   }
 }
