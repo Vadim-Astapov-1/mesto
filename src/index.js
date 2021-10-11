@@ -3,7 +3,6 @@
 import Card from '../scripts/Card.js';
 import FormValidator  from '../scripts/FormValidator.js';
 import Section from '../scripts/Section.js';
-import Popup from '../scripts/Popup.js';
 import PopupWithImage from '../scripts/PopupWithImage.js';
 import PopupWithForm from '../scripts/PopupWithForm.js';
 // Переменные надо собирать сверху
@@ -95,15 +94,7 @@ const closePopupEsc = (evt) => {
   }
 };
 
-function formSubmitHandler (evt) {
-    evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы и перезапуск страницы
 
-    // Вставьте новые значения
-    nameProfile.textContent = nameInput.value;
-    jobProfile.textContent = jobInput.value;
-
-    closePopup(editPopup);
-}
 
 //function createCard(configCard, cardSelector) {
   //const cardElement = new Card(configCard, cardSelector).generateCard();
@@ -120,11 +111,30 @@ popupWithCard.setEvetListeners();
 //});
 //popupFormEdit.setEvetListeners();
 
-//const popupFormAddCard = new PopupWithForm({
-  //selectorPopup: addPopup,
-  //handleFormSubmit: '',
-//});
-//PopupFormAddCard.setEvetListeners();
+const popupFormAddCard = new PopupWithForm(
+  addPopup,
+  (data) => {
+    const dataCard = [data];
+
+    const nextCard = new Section({
+      items: dataCard,
+      renderer: (item) => {
+        const card = new Card({
+          data: item,
+          handleCardClick: () => {
+            popupWithCard.open(item);
+          }
+        }, '.element-template');
+        const createdCard = card.generateCard();
+        nextCard.addItem(createdCard);
+      }
+    }, elements);
+
+    nextCard.renderItems();
+  }
+);
+
+popupFormAddCard.setEvetListeners();
 
 // Первые 6 карточек
 const initialCardList = new Section({
@@ -155,52 +165,13 @@ editButton.addEventListener('click', function() {
 
 // Прикрепляем обработчик к форме:
 // он будет следить за событием “submit” - «отправка»
-formEdit.addEventListener('submit', formSubmitHandler);
+
 
 addButton.addEventListener('click', function() {
   openPopup(addPopup);
   validatorAddForm.resetValidation();
 });
 
-formAdd.addEventListener('submit', function (evt) {
-  evt.preventDefault();
-
-  // Делаем массив с обьектом
-  //const dataCard = [{
-   // name: namePlaceInput.value,
-    //link: linkPlaceInput.value
-  //}];
-
-  const form = new PopupWithForm({
-    selectorPopup: addPopup,
-    handleFormSubmit: (dataCard) => {
-      const cardElement = new Section({
-        items: dataCard,
-        renderer: (item) => {
-          const card = new Card({
-            data: item,
-            handleCardClick: () => {
-              popupWithCard.open(item);
-            }
-          }, '.element-template');
-          const createdCard = card.generateCard();
-          cardElement.addItem(createdCard);
-        }
-      }, elements);
-
-      cardElement.renderItems();
-    }
-  });
-
-
-
-  closePopup(addPopup);
-
-  //Очищение формы лучше реализовать с помощью встроенного метода reset, очищающего всю форму
-  formAdd.reset();
-});
-
-// Вешаем обработчики событий на popupы
 
 
 // Вкл валидации
