@@ -87,12 +87,7 @@ const getValuesProfile = () => {
 const popupFormEdit = new PopupWithForm(
   editPopup,
   (dataForm) => {
-    const user = new UserInfo({
-      selectorName: nameProfile,
-      selectorAbout: jobProfile
-    });
-
-    user.setUserInfo(dataForm);
+    userProfile.setUserInfo(dataForm);
   }
 );
 
