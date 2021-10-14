@@ -24,7 +24,7 @@ export default class PopupWithForm extends Popup {
     super.close();
   }
 
-  setEvetListeners() {
+  setEventListeners() {
     this._form.addEventListener('submit', (evt) => {
       evt.preventDefault();
 
@@ -32,6 +32,6 @@ export default class PopupWithForm extends Popup {
       this.close();
     });
 
-    super.setEvetListeners();
+    super.setEventListeners();
   }
 }

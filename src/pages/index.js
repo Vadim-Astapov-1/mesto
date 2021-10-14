@@ -7,69 +7,39 @@ import PopupWithImage from '../components/PopupWithImage.js';
 import PopupWithForm from '../components/PopupWithForm.js';
 import UserInfo from '../components/UserInfo.js';
 
-const editPopup = document.querySelector('.popup_type_edit');
-const editButton = document.querySelector('.profile__edit-button');
-
-const nameInput = document.querySelector('.popup__input_type_name');
-const jobInput = document.querySelector('.popup__input_type_job');
-
-const addPopup = document.querySelector('.popup_type_add');
-const addButton = document.querySelector('.profile__add-button');
-
-const cardPopup = document.querySelector('.popup_type_card');
-
-const elements = document.querySelector('.elements');
-// Элементы, куда должны быть вставлены значения полей
-const nameProfile = document.querySelector('.profile__name');
-const jobProfile = document.querySelector('.profile__job');
-
-// Обьект для валидации
-const config = {
-  // formSelector больше не нужен
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__save-button',
-  inactiveButtonClass: 'popup__save-button_inactive',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__input-error_active'
-};
+import {
+  editPopup,
+  editButton,
+  nameInput,
+  jobInput,
+  addPopup,
+  addButton,
+  cardPopup,
+  elements,
+  nameProfile,
+  jobProfile,
+  config,
+  initialCards
+} from '../utils/constants.js'
 
 // Экземпляры валидированных форм
 const validatorEditForm = new FormValidator(config, '.popup__form_type_edit');
 const validatorAddForm = new FormValidator(config, '.popup__form_type_add');
 
-// Массив карточек
-const initialCards = [
-  {
-    name: 'Архыз',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg'
-  },
-  {
-    name: 'Челябинская область',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/chelyabinsk-oblast.jpg'
-  },
-  {
-    name: 'Иваново',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/ivanovo.jpg'
-  },
-  {
-    name: 'Камчатка',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kamchatka.jpg'
-  },
-  {
-    name: 'Холмогорский район',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kholmogorsky-rayon.jpg'
-  },
-  {
-    name: 'Байкал',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg'
-  }
-];
+// Вкл валидации
+validatorEditForm.enableValidation();
+validatorAddForm.enableValidation();
 
-//function createCard(configCard, cardSelector) {
-  //const cardElement = new Card(configCard, cardSelector).generateCard();
-  //return cardElement;
-//}
+function createCard(configCard, cardSelector) {
+  const cardElement = new Card({
+    data: configCard,
+    handleCardClick: () => {
+      popupWithCard.open(configCard);
+    }
+  }, cardSelector).generateCard();
+
+  return cardElement;
+}
 
 const userProfile = new UserInfo({
   selectorName: nameProfile,
@@ -82,7 +52,6 @@ const getValuesProfile = () => {
   nameInput.value = values.name;
   jobInput.value = values.about;
 }
-
 
 const popupFormEdit = new PopupWithForm(
   editPopup,
@@ -99,38 +68,27 @@ const popupFormAddCard = new PopupWithForm(
     const nextCard = new Section({
       items: dataCard,
       renderer: (item) => {
-        const card = new Card({
-          data: item,
-          handleCardClick: () => {
-            popupWithCard.open(item);
-          }
-        }, '.element-template');
-        const createdCard = card.generateCard();
-        nextCard.addItem(createdCard);
+        nextCard.addItem(createCard(item, '.element-template'));
       }
     }, elements);
-
     nextCard.renderItems();
   }
 );
+
+const popupWithCard = new PopupWithImage(cardPopup);
 
 // Первые 6 карточек
 const initialCardList = new Section({
   items: initialCards,
   renderer: (item) => {
-    const initialCard = new Card({
-      data: item,
-      handleCardClick: () => {
-        popupWithCard.open(item);
-      }
-    }, '.element-template');
-    const initialCardElement = initialCard.generateCard();
-    initialCardList.addItem(initialCardElement);
+    initialCardList.addItem(createCard(item, '.element-template'));
   }
 }, elements);
 initialCardList.renderItems();
 
-const popupWithCard = new PopupWithImage(cardPopup);
+popupFormEdit.setEventListeners();
+popupFormAddCard.setEventListeners();
+popupWithCard.setEventListeners();
 
 editButton.addEventListener('click', function() {
   popupFormEdit.open();
@@ -141,15 +99,7 @@ editButton.addEventListener('click', function() {
   validatorEditForm.resetValidation();
 });
 
-popupFormEdit.setEvetListeners();
-popupFormAddCard.setEvetListeners();
-popupWithCard.setEvetListeners();
-
 addButton.addEventListener('click', function() {
   popupFormAddCard.open();
   validatorAddForm.resetValidation();
 });
-
-// Вкл валидации
-validatorEditForm.enableValidation();
-validatorAddForm.enableValidation();
