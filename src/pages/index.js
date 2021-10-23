@@ -6,6 +6,7 @@ import Section from '../components/Section.js';
 import PopupWithImage from '../components/PopupWithImage.js';
 import PopupWithForm from '../components/PopupWithForm.js';
 import UserInfo from '../components/UserInfo.js';
+import Api from '../components/Api.js';
 
 import {
   editPopup,
@@ -78,13 +79,30 @@ const popupFormAddCard = new PopupWithForm(
 const popupWithCard = new PopupWithImage(cardPopup);
 
 // Первые 6 карточек
-const initialCardList = new Section({
-  items: initialCards,
-  renderer: (item) => {
-    initialCardList.addItem(createCard(item, '.element-template'));
+const cardListApi = new Api({
+  url: 'https://mesto.nomoreparties.co/v1/cohort-29/cards',
+  method: 'GET',
+  headers: {
+    authorization: '48b4784f-cf14-43a9-b48d-b9db9c186300',
+    'Content-Type': 'application/json'
   }
-}, elements);
-initialCardList.renderItems();
+});
+const cardList = cardListApi.getInitialCards();
+cardList
+  .then((data) => {
+  const List = new Section({
+    items: data,
+    renderer: (item) => {
+      List.addItem(createCard(item, '.element-template'));
+    }
+  }, elements);
+
+  List.renderItems();
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
 
 popupFormEdit.setEventListeners();
 popupFormAddCard.setEventListeners();

@@ -38,6 +38,17 @@
           </form>
         </div>
       </div>
+      <div class="popup popup_type_avatar">
+        <div class="popup__container">
+          <button class="popup__close-button" type="button"></button>
+          <form class="popup__form popup__form_type_avatar" name="popupAvatarForm" novalidate>
+            <h2 class="popup__title">Обновить аватар</h2>
+            <input type="url" class="popup__input popup__input_type_avatar" id="avatar-input" name="link" required>
+            <span class="popup__input-error" id="avatar-input-error"></span>
+            <button class="popup__save-button" type="submit">Сохранить</button>
+          </form>
+        </div>
+      </div>
       <div class="popup popup_type_add">
         <div class="popup__container">
           <button class="popup__close-button" type="button"></button>
@@ -48,7 +59,7 @@
             <!-- input должен принимать только ссылки, для это есть type="url" -->
             <input type="url" placeholder="Ссылка на картинку" class="popup__input popup__input_type_place-link" id="place-link-input" name="link" required>
             <span class="popup__input-error" id="place-link-input-error"></span>
-            <button class="popup__save-button popup__save-button_type_create" type="submit">Создать</button>
+            <button class="popup__save-button" type="submit">Создать</button>
           </form>
         </div>
       </div>
@@ -57,6 +68,15 @@
           <button class="popup__close-button" type="button"></button>
           <img class="popup__image">
           <p class="popup__title-card"></p>
+        </div>
+      </div>
+      <div class="popup popup_type_delete">
+        <div class="popup__container">
+          <button class="popup__close-button" type="button"></button>
+          <form class="popup__form popup__form_type_delete" name="popupDeleteCard">
+            <h2 class="popup__title">Вы уверены?</h2>
+            <button class="popup__save-button" type="submit">Да</button>
+          </form>
         </div>
       </div>
     </div>
