@@ -64,18 +64,6 @@ function createCard(configCard, cardSelector) {
   return cardElement;
 }
 
-const userProfile = new UserInfo({
-  selectorName: nameProfile,
-  selectorAbout: jobProfile
-});
-
-const getValuesProfile = () => {
-  const values = userProfile.getUserInfo();
-
-  nameInput.value = values.name;
-  jobInput.value = values.about;
-};
-
 const userApi = new Api({
   url: 'https://nomoreparties.co/v1/cohort-29/users/me',
   headers: {
@@ -90,7 +78,27 @@ const userAvatarApi = new Api({
     authorization: '48b4784f-cf14-43a9-b48d-b9db9c186300',
     'Content-Type': 'application/json'
   }
-})
+});
+
+const cardListApi = new Api({
+  url: 'https://mesto.nomoreparties.co/v1/cohort-29/cards/',
+  headers: {
+    authorization: '48b4784f-cf14-43a9-b48d-b9db9c186300',
+    'Content-Type': 'application/json'
+  }
+});
+
+const userProfile = new UserInfo({
+  selectorName: nameProfile,
+  selectorAbout: jobProfile
+});
+
+const getValuesProfile = () => {
+  const values = userProfile.getUserInfo();
+
+  nameInput.value = values.name;
+  jobInput.value = values.about;
+};
 
 const popupFormEditAvatar = new PopupWithForm(
   editAvatarPopup,
@@ -117,14 +125,6 @@ const popupFormEdit = new PopupWithForm(
       });
   }
 );
-
-const cardListApi = new Api({
-  url: 'https://mesto.nomoreparties.co/v1/cohort-29/cards/',
-  headers: {
-    authorization: '48b4784f-cf14-43a9-b48d-b9db9c186300',
-    'Content-Type': 'application/json'
-  }
-});
 
 const popupFormAddCard = new PopupWithForm(
   addPopup,
@@ -190,6 +190,7 @@ popupFormEditAvatar.setEventListeners();
 
 editAvatarButton.addEventListener('click', function() {
   popupFormEditAvatar.open();
+  validatorAvatarForm.resetValidation();
 });
 
 editButton.addEventListener('click', function() {

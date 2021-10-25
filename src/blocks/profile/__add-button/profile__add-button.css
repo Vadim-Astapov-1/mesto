@@ -28,9 +28,14 @@
   }
 }
 
+@media all and (max-width: 657px) {
+  .profile__add-button {
+    width: 282px;
+  }
+}
+
 @media all and (max-width: 425px) {
   .profile__add-button {
-    width: 100%;
     margin-top: 36px;
     background-size: 16px 16px;
   }
