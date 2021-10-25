@@ -12,12 +12,12 @@
       </header>
       <main class="content">
         <section class="profile">
-          <img src="<%=require('./images/custo.jpg')%>" alt="Аватар" class="profile__avatar">
+          <img alt="Аватар" class="profile__avatar">
           <div class="profile__avatar-button"></div>
           <div class="profile__info">
-            <h1 class="profile__name">Жак-Ив Кусто</h1>
+            <h1 class="profile__name"></h1>
             <button class="profile__edit-button" type="button"></button>
-            <p class="profile__job">Исследователь океана</p>
+            <p class="profile__job"></p>
           </div>
           <button class="profile__add-button" type="button"></button>
         </section>
@@ -44,7 +44,7 @@
           <button class="popup__close-button" type="button"></button>
           <form class="popup__form popup__form_type_avatar" name="popupAvatarForm" novalidate>
             <h2 class="popup__title">Обновить аватар</h2>
-            <input type="url" class="popup__input popup__input_type_avatar" id="avatar-input" name="link" required>
+            <input type="url" placeholder="Ссылка на изображение" class="popup__input popup__input_type_avatar" id="avatar-input" name="avatar" required>
             <span class="popup__input-error" id="avatar-input-error"></span>
             <button class="popup__save-button" type="submit">Сохранить</button>
           </form>
@@ -71,10 +71,10 @@
           <p class="popup__title-card"></p>
         </div>
       </div>
-      <div class="popup popup_type_delete">
+      <div class="popup popup_type_confirm">
         <div class="popup__container">
           <button class="popup__close-button" type="button"></button>
-          <form class="popup__form popup__form_type_delete" name="popupDeleteCard">
+          <form class="popup__form popup__form_type_confirm" name="popupConfirm">
             <h2 class="popup__title popup__title_place_popup-confirm">Вы уверены?</h2>
             <button class="popup__save-button" type="submit">Да</button>
           </form>
