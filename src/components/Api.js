@@ -1,13 +1,41 @@
 export default class Api {
   constructor(options) {
     this._url = options.url;
-    this._method = options.method;
     this._headers = options.headers;
+  }
+
+  deleteCard(_id) {
+    return fetch(`${this._url}${_id}`, {
+      method: 'DELETE',
+      headers: this._headers
+    })
+    .then(res => {
+      if(res.ok) {
+        return res.json();
+      } else {
+        return Promise.reject(`Ошибка: ${res.status}`);
+      }
+    });
+  }
+
+  addCard(data) {
+    return fetch(this._url, {
+      method: 'POST',
+      headers: this._headers,
+      body: JSON.stringify(data)
+    })
+    .then(res => {
+      if(res.ok) {
+        return res.json();
+      } else {
+        return Promise.reject(`Ошибка: ${res.status}`);
+      }
+    });
   }
 
   getInitialCards() {
     return fetch(this._url, {
-      method: this._method,
+      method: 'GET',
       headers: this._headers
     })
     .then(res => {

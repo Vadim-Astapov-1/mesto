@@ -5,6 +5,7 @@ import FormValidator  from '../components/FormValidator.js';
 import Section from '../components/Section.js';
 import PopupWithImage from '../components/PopupWithImage.js';
 import PopupWithForm from '../components/PopupWithForm.js';
+import PopupDeleteConfirm from '../components/PopupDeleteConfirm.js';
 import UserInfo from '../components/UserInfo.js';
 import Api from '../components/Api.js';
 
@@ -16,26 +17,44 @@ import {
   addPopup,
   addButton,
   cardPopup,
+  cardPopupDelete,
   elements,
   nameProfile,
   jobProfile,
-  config,
-  initialCards
+  config
 } from '../utils/constants.js'
 
 // Экземпляры валидированных форм
 const validatorEditForm = new FormValidator(config, '.popup__form_type_edit');
 const validatorAddForm = new FormValidator(config, '.popup__form_type_add');
+const validatorAvatarForm = new FormValidator(config, '.popup__form_type_avatar');
 
 // Вкл валидации
 validatorEditForm.enableValidation();
 validatorAddForm.enableValidation();
+validatorAvatarForm.enableValidation();
 
 function createCard(configCard, cardSelector) {
   const cardElement = new Card({
     data: configCard,
     handleCardClick: () => {
       popupWithCard.open(configCard);
+    },
+    handleCardLike: () => {
+
+    },
+    handleCardDelete: () => {
+      popupDeleteConfirm.open();
+      // вставляем какую ходим функцию
+      popupDeleteConfirm.handelFunction(() => {
+        cardListApi.deleteCard(configCard._id)
+        .then(() => {
+          cardElement.remove();
+        })
+        .catch(err => {
+          console.log(err)
+        });
+      });
     }
   }, cardSelector).generateCard();
 
@@ -61,6 +80,14 @@ const popupFormEdit = new PopupWithForm(
   }
 );
 
+const cardListApi = new Api({
+  url: 'https://mesto.nomoreparties.co/v1/cohort-29/cards/',
+  headers: {
+    authorization: '48b4784f-cf14-43a9-b48d-b9db9c186300',
+    'Content-Type': 'application/json'
+  }
+});
+
 const popupFormAddCard = new PopupWithForm(
   addPopup,
   (dataForm) => {
@@ -69,7 +96,14 @@ const popupFormAddCard = new PopupWithForm(
     const nextCard = new Section({
       items: dataCard,
       renderer: (item) => {
-        nextCard.addItem(createCard(item, '.element-template'));
+        //nextCard.saveItem(item, createCard(item, '.element-template'));
+        cardListApi.addCard(item)
+        .then(() => {
+          nextCard.addItem(createCard(item, '.element-template'));
+        })
+        .catch(err => {
+          console.log(err)
+        });
       }
     }, elements);
     nextCard.renderItems();
@@ -78,26 +112,20 @@ const popupFormAddCard = new PopupWithForm(
 
 const popupWithCard = new PopupWithImage(cardPopup);
 
+const popupDeleteConfirm = new PopupDeleteConfirm(cardPopupDelete);
+
 // Первые 6 карточек
-const cardListApi = new Api({
-  url: 'https://mesto.nomoreparties.co/v1/cohort-29/cards',
-  method: 'GET',
-  headers: {
-    authorization: '48b4784f-cf14-43a9-b48d-b9db9c186300',
-    'Content-Type': 'application/json'
-  }
-});
-const cardList = cardListApi.getInitialCards();
-cardList
+cardListApi.getInitialCards()
   .then((data) => {
-  const List = new Section({
+    console.log(data);
+  const cardList = new Section({
     items: data,
     renderer: (item) => {
-      List.addItem(createCard(item, '.element-template'));
+      cardList.addItem(createCard(item, '.element-template'));
     }
   }, elements);
 
-  List.renderItems();
+  cardList.renderItems();
   })
   .catch((err) => {
     console.log(err);
@@ -107,6 +135,7 @@ cardList
 popupFormEdit.setEventListeners();
 popupFormAddCard.setEventListeners();
 popupWithCard.setEventListeners();
+popupDeleteConfirm.setEventListeners();
 
 editButton.addEventListener('click', function() {
   popupFormEdit.open();
