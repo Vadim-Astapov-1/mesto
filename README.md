@@ -35,4 +35,4 @@ Javascript реализует открытие и закрытия окна _pop
 
 + Настройка форм для сохрания данных после перезагрузки страницы.
 
-### Ссылка на проект:  https://vadim-astapov-1.github.io/mesto/src/index.html
+### Ссылка на проект:  https://vadim-astapov-1.github.io/mesto/
