@@ -43,8 +43,30 @@ function createCard(configCard, cardSelector) {
     handleCardClick: () => {
       popupWithCard.open(configCard);
     },
-    handleCardLike: () => {
+    handleCardLike: (evt) => {
+      cardElement.querySelector('.element__like-count').textContent = configCard.likes.length;
 
+      if(!evt.target.classList.contains('element__like-button_active')) {
+        cardsLikes.putData(configCard._id)
+        .then(() => {
+          evt.target.classList.add('element__like-button_active');
+          configCard.likes.push([1])
+          //console.log(configCard.likes);
+          //cardElement.querySelector('.element__like-count').textContent = configCard.likes.length;
+        })
+        .catch(err => {
+          console.log(err)
+        });
+      }
+      if(evt.target.classList.contains('element__like-button_active')) {
+        cardsLikes.deleteData(configCard._id)
+        .then(() => {
+          evt.target.classList.remove('element__like-button_active');
+        })
+        .catch(err => {
+          console.log(err)
+        });
+      }
     },
     handleCardDelete: () => {
       popupConfirm.open();
@@ -82,6 +104,14 @@ const userAvatarApi = new Api({
 
 const cardListApi = new Api({
   url: 'https://mesto.nomoreparties.co/v1/cohort-29/cards/',
+  headers: {
+    authorization: '48b4784f-cf14-43a9-b48d-b9db9c186300',
+    'Content-Type': 'application/json'
+  }
+});
+
+const cardsLikes = new Api({
+  url: 'https://mesto.nomoreparties.co/v1/cohort-29/cards/likes/',
   headers: {
     authorization: '48b4784f-cf14-43a9-b48d-b9db9c186300',
     'Content-Type': 'application/json'
@@ -135,6 +165,7 @@ const popupFormEdit = new PopupWithForm(
 const popupFormAddCard = new PopupWithForm(
   addPopup,
   (dataForm) => {
+    dataForm.likes = Array(0);
     const dataCard = [dataForm];
 
     const nextCard = new Section({
@@ -162,9 +193,11 @@ const popupWithCard = new PopupWithImage(cardPopup);
 const popupConfirm = new PopupConfirm(confirmPopup);
 
 // Загрузка профиля
-userApi.getData()
+const userData = userApi.getData();
+console.log(userData);
+userData
   .then(data => {
-    console.log(data)
+    console.log(data);
     userProfile.setUserInfo(data);
     avatar.src = data.avatar;
     avatar.alt = data.name;
@@ -176,6 +209,7 @@ userApi.getData()
 // Загрузка карточек
 cardListApi.getData()
   .then((data) => {
+    console.log(data);
   const cardList = new Section({
     items: data,
     renderer: (item) => {

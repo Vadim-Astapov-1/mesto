@@ -4,6 +4,20 @@ export default class Api {
     this._headers = options.headers;
   }
 
+  putData(_id) {
+    return fetch(`${this._url}${_id}`, {
+      method: 'PUT',
+      headers: this._headers
+    })
+    .then(res => {
+      if(res.ok) {
+        return res.json();
+      } else {
+        return Promise.reject(`Ошибка: ${res.status}`);
+      }
+    });
+  }
+
   patchData(data) {
     return fetch(this._url, {
       method: 'PATCH',
