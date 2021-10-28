@@ -44,27 +44,24 @@ function createCard(configCard, cardSelector) {
       popupWithCard.open(configCard);
     },
     handleCardLike: (evt) => {
-      cardElement.querySelector('.element__like-count').textContent = configCard.likes.length;
-
       if(!evt.target.classList.contains('element__like-button_active')) {
         cardsLikes.putData(configCard._id)
-        .then(() => {
+        .then((res) => {
           evt.target.classList.add('element__like-button_active');
-          configCard.likes.push([1])
-          //console.log(configCard.likes);
-          //cardElement.querySelector('.element__like-count').textContent = configCard.likes.length;
+          cardElement.querySelector('.element__like-count').textContent = res.likes.length;
         })
         .catch(err => {
-          console.log(err)
+          console.log(err);
         });
       }
       if(evt.target.classList.contains('element__like-button_active')) {
         cardsLikes.deleteData(configCard._id)
-        .then(() => {
+        .then((res) => {
           evt.target.classList.remove('element__like-button_active');
+          cardElement.querySelector('.element__like-count').textContent = res.likes.length;
         })
         .catch(err => {
-          console.log(err)
+          console.log(err);
         });
       }
     },
@@ -77,11 +74,20 @@ function createCard(configCard, cardSelector) {
           cardElement.remove();
         })
         .catch(err => {
-          console.log(err)
+          console.log(err);
         });
       });
     }
   }, cardSelector).generateCard();
+
+  // Проверка. Если уже лайкнул карту, пусть кнопка лайка будет активной
+  userData.then(data => {
+    configCard.likes.some(item => {
+      if(item._id === data._id) {
+        cardElement.querySelector('.element__like-button').classList.add('element__like-button_active');
+      }
+    })
+  });
 
   return cardElement;
 }
@@ -138,7 +144,7 @@ const popupFormEditAvatar = new PopupWithForm(
         avatar.src = avatarData.avatar;
       })
       .catch(err => {
-        console.log(err)
+        console.log(err);
       })
       .finally(() => {
         popupFormEditAvatar.renderLoading(false);
@@ -154,7 +160,7 @@ const popupFormEdit = new PopupWithForm(
         userProfile.setUserInfo(dataForm);
       })
       .catch(err => {
-        console.log(err)
+        console.log(err);
       })
       .finally(() => {
         popupFormEdit.renderLoading(false);
@@ -173,11 +179,11 @@ const popupFormAddCard = new PopupWithForm(
       renderer: (item) => {
         //nextCard.saveItem(item, createCard(item, '.element-template'));
         cardListApi.addData(item)
-        .then(() => {
-          nextCard.addItem(createCard(item, '.element-template'));
+        .then((data) => {
+          nextCard.addItem(createCard(data, '.element-template'));
         })
         .catch(err => {
-          console.log(err)
+          console.log(err);
         })
         .finally(() => {
           popupFormAddCard.renderLoading(false);
@@ -194,10 +200,8 @@ const popupConfirm = new PopupConfirm(confirmPopup);
 
 // Загрузка профиля
 const userData = userApi.getData();
-console.log(userData);
 userData
   .then(data => {
-    console.log(data);
     userProfile.setUserInfo(data);
     avatar.src = data.avatar;
     avatar.alt = data.name;
@@ -209,7 +213,6 @@ userData
 // Загрузка карточек
 cardListApi.getData()
   .then((data) => {
-    console.log(data);
   const cardList = new Section({
     items: data,
     renderer: (item) => {
