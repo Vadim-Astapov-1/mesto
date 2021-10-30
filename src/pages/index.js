@@ -82,16 +82,7 @@ function createCard(configCard, cardSelector) {
         });
       });
     }
-  }, cardSelector).generateCard();
-
-  // Проверка. Если уже лайкнул карту, пусть кнопка лайка будет активной
-  userData.then(data => {
-    configCard.likes.some(item => {
-      if(item._id === data._id) {
-        cardElement.querySelector('.element__like-button').classList.add('element__like-button_active');
-      }
-    })
-  });
+  }, cardSelector, userData).generateCard();
 
   return cardElement;
 }
@@ -111,7 +102,7 @@ const apiData = new Api({
     authorization: '48b4784f-cf14-43a9-b48d-b9db9c186300',
     'Content-Type': 'application/json'
   }
-})
+});
 
 const userProfile = new UserInfo({
   selectorName: nameProfile,

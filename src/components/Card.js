@@ -1,5 +1,6 @@
 export default class Card {
-  constructor({data, handleCardClick, handleCardLike, handleCardDelete}, cardSelector) {
+  constructor({data, handleCardClick, handleCardLike, handleCardDelete}, cardSelector, userApi) {
+    this._data = data;
     this._name = data.name;
     this._link = data.link;
     this._likeCount = data.likes.length;
@@ -8,6 +9,18 @@ export default class Card {
     this._handleCardLike = handleCardLike;
     this._handleCardDelete = handleCardDelete;
     this._cardSelector = cardSelector;
+    this._userApi = userApi;
+  }
+
+  // Проверка. Если уже лайкнул карту, пусть кнопка лайка будет активной
+  _checkIsLiked() {
+    this._userApi.then(res => {
+      this._data.likes.some(item => {
+        if(item._id === res._id) {
+          this._element.querySelector('.element__like-button').classList.add('element__like-button_active');
+        }
+      })
+    });
   }
 
   _getTemplate() {
@@ -35,6 +48,7 @@ export default class Card {
   generateCard() {
     this._element = this._getTemplate();
     this._setEventListeners();
+    this._checkIsLiked();
 
     this._title = this._element.querySelector('.element__title');
     this._image = this._element.querySelector('.element__image');
