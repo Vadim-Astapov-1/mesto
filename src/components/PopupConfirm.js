@@ -16,7 +16,7 @@ export default class PopupDeleteConfirm extends Popup {
       evt.preventDefault();
       this._function();
 
-      super.close();
+      //super.close();
     });
 
     super.setEventListeners();

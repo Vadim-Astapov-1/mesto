@@ -12,7 +12,6 @@ import Api from '../components/Api.js';
 import {
   editPopup,
   editButton,
-  avatar,
   editAvatarPopup,
   editAvatarButton,
   nameInput,
@@ -22,8 +21,10 @@ import {
   cardPopup,
   confirmPopup,
   elements,
+  avatar,
   nameProfile,
   jobProfile,
+  profile,
   config
 } from '../utils/constants.js'
 
@@ -73,6 +74,9 @@ function createCard(configCard, cardSelector) {
         .then(() => {
           cardElement.remove();
         })
+        .then(() => {
+          popupConfirm.close();
+        })
         .catch(err => {
           console.log(err);
         });
@@ -91,6 +95,23 @@ function createCard(configCard, cardSelector) {
 
   return cardElement;
 }
+
+//const section = new Section({
+  //items: item,
+  //renderer: (item) => {
+    //section.addItem(createCard(item, '.element-template'));
+  //},
+//}, elements);
+
+//section.renderItems();
+
+const ApiData = new Api({
+  url: 'https://nomoreparties.co/v1/cohort-29/',
+  headers: {
+    authorization: '48b4784f-cf14-43a9-b48d-b9db9c186300',
+    'Content-Type': 'application/json'
+  }
+})
 
 const userApi = new Api({
   url: 'https://nomoreparties.co/v1/cohort-29/users/me',
@@ -126,7 +147,9 @@ const cardsLikes = new Api({
 
 const userProfile = new UserInfo({
   selectorName: nameProfile,
-  selectorAbout: jobProfile
+  selectorAbout: jobProfile,
+  selectorAvatar: avatar,
+  selectorProfile: profile
 });
 
 const getValuesProfile = () => {
@@ -140,8 +163,11 @@ const popupFormEditAvatar = new PopupWithForm(
   editAvatarPopup,
   (avatarData) => {
     userAvatarApi.patchData(avatarData)
+      .then(data => {
+        userProfile.setUserInfo(data);
+      })
       .then(() => {
-        avatar.src = avatarData.avatar;
+        popupFormEditAvatar.close();
       })
       .catch(err => {
         console.log(err);
@@ -156,8 +182,11 @@ const popupFormEdit = new PopupWithForm(
   editPopup,
   (dataForm) => {
     userApi.patchData(dataForm)
+      .then(data => {
+        userProfile.setUserInfo(data);
+      })
       .then(() => {
-        userProfile.setUserInfo(dataForm);
+        popupFormEdit.close();
       })
       .catch(err => {
         console.log(err);
@@ -182,6 +211,9 @@ const popupFormAddCard = new PopupWithForm(
         .then((data) => {
           nextCard.addItem(createCard(data, '.element-template'));
         })
+        .then(() => {
+          popupFormAddCard.close();
+        })
         .catch(err => {
           console.log(err);
         })
@@ -203,8 +235,6 @@ const userData = userApi.getData();
 userData
   .then(data => {
     userProfile.setUserInfo(data);
-    avatar.src = data.avatar;
-    avatar.alt = data.name;
   })
   .catch((err) => {
     console.log(err);
@@ -225,6 +255,12 @@ cardListApi.getData()
   .catch((err) => {
     console.log(err);
   });
+
+  //const accountPromoses = [userData, cardListApi]
+  //Promise.all(accountPromoses)
+    //then(data => {
+      //console.log(data);
+    //})
 
 
 popupFormEdit.setEventListeners();

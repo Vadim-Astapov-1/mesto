@@ -4,18 +4,20 @@ export default class Api {
     this._headers = options.headers;
   }
 
+  _checkResponse(res) {
+    if(res.ok) {
+      return res.json();
+    } else {
+      return Promise.reject(`Ошибка: ${res.status}`);
+    }
+  }
+
   putData(_id) {
     return fetch(`${this._url}${_id}`, {
       method: 'PUT',
       headers: this._headers
     })
-    .then(res => {
-      if(res.ok) {
-        return res.json();
-      } else {
-        return Promise.reject(`Ошибка: ${res.status}`);
-      }
-    });
+    .then(this._checkResponse);
   }
 
   patchData(data) {
@@ -24,13 +26,7 @@ export default class Api {
       headers: this._headers,
       body: JSON.stringify(data)
     })
-    .then(res => {
-      if(res.ok) {
-        return res.json();
-      } else {
-        return Promise.reject(`Ошибка: ${res.status}`);
-      }
-    });
+    .then(this._checkResponse);
   }
 
   deleteData(_id) {
@@ -38,13 +34,7 @@ export default class Api {
       method: 'DELETE',
       headers: this._headers
     })
-    .then(res => {
-      if(res.ok) {
-        return res.json();
-      } else {
-        return Promise.reject(`Ошибка: ${res.status}`);
-      }
-    });
+    .then(this._checkResponse);
   }
 
   addData(data) {
@@ -53,13 +43,7 @@ export default class Api {
       headers: this._headers,
       body: JSON.stringify(data)
     })
-    .then(res => {
-      if(res.ok) {
-        return res.json();
-      } else {
-        return Promise.reject(`Ошибка: ${res.status}`);
-      }
-    });
+    .then(this._checkResponse);
   }
 
   getData() {
@@ -67,12 +51,6 @@ export default class Api {
       method: 'GET',
       headers: this._headers
     })
-    .then(res => {
-      if(res.ok) {
-        return res.json();
-      } else {
-        return Promise.reject(`Ошибка: ${res.status}`);
-      }
-    });
+    .then(this._checkResponse);
   }
 }
