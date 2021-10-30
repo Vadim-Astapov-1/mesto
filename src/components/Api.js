@@ -12,16 +12,16 @@ export default class Api {
     }
   }
 
-  putData(_id) {
-    return fetch(`${this._url}${_id}`, {
+  putData(way, _id) {
+    return fetch(`${this._url}${way}${_id}`, {
       method: 'PUT',
       headers: this._headers
     })
     .then(this._checkResponse);
   }
 
-  patchData(data) {
-    return fetch(this._url, {
+  patchData(way, data) {
+    return fetch(`${this._url}${way}`, {
       method: 'PATCH',
       headers: this._headers,
       body: JSON.stringify(data)
@@ -29,16 +29,16 @@ export default class Api {
     .then(this._checkResponse);
   }
 
-  deleteData(_id) {
-    return fetch(`${this._url}${_id}`, {
+  deleteData(way, _id) {
+    return fetch(`${this._url}${way}${_id}`, {
       method: 'DELETE',
       headers: this._headers
     })
     .then(this._checkResponse);
   }
 
-  addData(data) {
-    return fetch(this._url, {
+  addData(way, data) {
+    return fetch(`${this._url}${way}`, {
       method: 'POST',
       headers: this._headers,
       body: JSON.stringify(data)
@@ -46,8 +46,8 @@ export default class Api {
     .then(this._checkResponse);
   }
 
-  getData() {
-    return fetch(this._url, {
+  getData(way) {
+    return fetch(`${this._url}${way}`, {
       method: 'GET',
       headers: this._headers
     })

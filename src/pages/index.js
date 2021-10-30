@@ -46,7 +46,7 @@ function createCard(configCard, cardSelector) {
     },
     handleCardLike: (evt) => {
       if(!evt.target.classList.contains('element__like-button_active')) {
-        cardsLikes.putData(configCard._id)
+        apiData.putData('cards/likes/', configCard._id)
         .then((res) => {
           evt.target.classList.add('element__like-button_active');
           cardElement.querySelector('.element__like-count').textContent = res.likes.length;
@@ -56,7 +56,7 @@ function createCard(configCard, cardSelector) {
         });
       }
       if(evt.target.classList.contains('element__like-button_active')) {
-        cardsLikes.deleteData(configCard._id)
+        apiData.deleteData('cards/likes/', configCard._id)
         .then((res) => {
           evt.target.classList.remove('element__like-button_active');
           cardElement.querySelector('.element__like-count').textContent = res.likes.length;
@@ -70,7 +70,7 @@ function createCard(configCard, cardSelector) {
       popupConfirm.open();
       // вставляем какую ходим функцию
       popupConfirm.handelFunction(() => {
-        cardListApi.deleteData(configCard._id)
+        apiData.deleteData('cards/', configCard._id)
         .then(() => {
           cardElement.remove();
         })
@@ -105,45 +105,13 @@ function createCard(configCard, cardSelector) {
 
 //section.renderItems();
 
-const ApiData = new Api({
+const apiData = new Api({
   url: 'https://nomoreparties.co/v1/cohort-29/',
   headers: {
     authorization: '48b4784f-cf14-43a9-b48d-b9db9c186300',
     'Content-Type': 'application/json'
   }
 })
-
-const userApi = new Api({
-  url: 'https://nomoreparties.co/v1/cohort-29/users/me',
-  headers: {
-    authorization: '48b4784f-cf14-43a9-b48d-b9db9c186300',
-    'Content-Type': 'application/json'
-  }
-});
-
-const userAvatarApi = new Api({
-  url: 'https://nomoreparties.co/v1/cohort-29/users/me/avatar',
-  headers: {
-    authorization: '48b4784f-cf14-43a9-b48d-b9db9c186300',
-    'Content-Type': 'application/json'
-  }
-});
-
-const cardListApi = new Api({
-  url: 'https://mesto.nomoreparties.co/v1/cohort-29/cards/',
-  headers: {
-    authorization: '48b4784f-cf14-43a9-b48d-b9db9c186300',
-    'Content-Type': 'application/json'
-  }
-});
-
-const cardsLikes = new Api({
-  url: 'https://mesto.nomoreparties.co/v1/cohort-29/cards/likes/',
-  headers: {
-    authorization: '48b4784f-cf14-43a9-b48d-b9db9c186300',
-    'Content-Type': 'application/json'
-  }
-});
 
 const userProfile = new UserInfo({
   selectorName: nameProfile,
@@ -162,7 +130,7 @@ const getValuesProfile = () => {
 const popupFormEditAvatar = new PopupWithForm(
   editAvatarPopup,
   (avatarData) => {
-    userAvatarApi.patchData(avatarData)
+    apiData.patchData('users/me/avatar', avatarData)
       .then(data => {
         userProfile.setUserInfo(data);
       })
@@ -181,7 +149,7 @@ const popupFormEditAvatar = new PopupWithForm(
 const popupFormEdit = new PopupWithForm(
   editPopup,
   (dataForm) => {
-    userApi.patchData(dataForm)
+    apiData.patchData('users/me', dataForm)
       .then(data => {
         userProfile.setUserInfo(data);
       })
@@ -207,7 +175,7 @@ const popupFormAddCard = new PopupWithForm(
       items: dataCard,
       renderer: (item) => {
         //nextCard.saveItem(item, createCard(item, '.element-template'));
-        cardListApi.addData(item)
+        apiData.addData('cards/', item)
         .then((data) => {
           nextCard.addItem(createCard(data, '.element-template'));
         })
@@ -231,7 +199,7 @@ const popupWithCard = new PopupWithImage(cardPopup);
 const popupConfirm = new PopupConfirm(confirmPopup);
 
 // Загрузка профиля
-const userData = userApi.getData();
+const userData = apiData.getData('users/me');
 userData
   .then(data => {
     userProfile.setUserInfo(data);
@@ -241,7 +209,7 @@ userData
   });
 
 // Загрузка карточек
-cardListApi.getData()
+apiData.getData('cards/')
   .then((data) => {
   const cardList = new Section({
     items: data,
@@ -261,7 +229,6 @@ cardListApi.getData()
     //then(data => {
       //console.log(data);
     //})
-
 
 popupFormEdit.setEventListeners();
 popupFormAddCard.setEventListeners();
