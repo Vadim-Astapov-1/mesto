@@ -46,7 +46,7 @@ function createCard(configCard, cardSelector) {
     },
     handleCardLike: (evt) => {
       if(!evt.target.classList.contains('element__like-button_active')) {
-        apiData.putData('cards/likes/', configCard._id)
+        api.putData('cards/likes/', configCard._id)
         .then((res) => {
           evt.target.classList.add('element__like-button_active');
           cardElement.querySelector('.element__like-count').textContent = res.likes.length;
@@ -56,7 +56,7 @@ function createCard(configCard, cardSelector) {
         });
       }
       if(evt.target.classList.contains('element__like-button_active')) {
-        apiData.deleteData('cards/likes/', configCard._id)
+        api.deleteData('cards/likes/', configCard._id)
         .then((res) => {
           evt.target.classList.remove('element__like-button_active');
           cardElement.querySelector('.element__like-count').textContent = res.likes.length;
@@ -70,7 +70,7 @@ function createCard(configCard, cardSelector) {
       popupConfirm.open();
       // вставляем какую ходим функцию
       popupConfirm.handelFunction(() => {
-        apiData.deleteData('cards/', configCard._id)
+        api.deleteData('cards/', configCard._id)
         .then(() => {
           cardElement.remove();
         })
@@ -87,16 +87,13 @@ function createCard(configCard, cardSelector) {
   return cardElement;
 }
 
-//const section = new Section({
-  //items: item,
-  //renderer: (item) => {
-    //section.addItem(createCard(item, '.element-template'));
-  //},
-//}, elements);
+const section = new Section({
+  renderer: (item) => {
+    section.addItem(createCard(item, '.element-template'));
+  },
+}, elements);
 
-//section.renderItems();
-
-const apiData = new Api({
+const api = new Api({
   url: 'https://nomoreparties.co/v1/cohort-29/',
   headers: {
     authorization: '48b4784f-cf14-43a9-b48d-b9db9c186300',
@@ -121,7 +118,7 @@ const getValuesProfile = () => {
 const popupFormEditAvatar = new PopupWithForm(
   editAvatarPopup,
   (avatarData) => {
-    apiData.patchData('users/me/avatar', avatarData)
+    api.patchData('users/me/avatar', avatarData)
       .then(data => {
         userProfile.setUserInfo(data);
       })
@@ -140,7 +137,7 @@ const popupFormEditAvatar = new PopupWithForm(
 const popupFormEdit = new PopupWithForm(
   editPopup,
   (dataForm) => {
-    apiData.patchData('users/me', dataForm)
+    api.patchData('users/me', dataForm)
       .then(data => {
         userProfile.setUserInfo(data);
       })
@@ -159,16 +156,9 @@ const popupFormEdit = new PopupWithForm(
 const popupFormAddCard = new PopupWithForm(
   addPopup,
   (dataForm) => {
-    dataForm.likes = Array(0);
-    const dataCard = [dataForm];
-
-    const nextCard = new Section({
-      items: dataCard,
-      renderer: (item) => {
-        //nextCard.saveItem(item, createCard(item, '.element-template'));
-        apiData.addData('cards/', item)
-        .then((data) => {
-          nextCard.addItem(createCard(data, '.element-template'));
+      api.addData('cards/', dataForm)
+        .then((res) => {
+          section.renderItems([res]);
         })
         .then(() => {
           popupFormAddCard.close();
@@ -179,9 +169,6 @@ const popupFormAddCard = new PopupWithForm(
         .finally(() => {
           popupFormAddCard.renderLoading(false);
         });
-      }
-    }, elements);
-    nextCard.renderItems();
   }
 );
 
@@ -190,7 +177,7 @@ const popupWithCard = new PopupWithImage(cardPopup);
 const popupConfirm = new PopupConfirm(confirmPopup);
 
 // Загрузка профиля
-const userData = apiData.getData('users/me');
+const userData = api.getData('users/me');
 userData
   .then(data => {
     userProfile.setUserInfo(data);
@@ -200,16 +187,9 @@ userData
   });
 
 // Загрузка карточек
-apiData.getData('cards/')
+api.getData('cards/')
   .then((data) => {
-  const cardList = new Section({
-    items: data,
-    renderer: (item) => {
-      cardList.addItem(createCard(item, '.element-template'));
-    }
-  }, elements);
-
-  cardList.renderItems();
+  section.renderItems(data);
   })
   .catch((err) => {
     console.log(err);
