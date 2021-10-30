@@ -178,28 +178,15 @@ const popupConfirm = new PopupConfirm(confirmPopup);
 
 // Загрузка профиля
 const userData = api.getData('users/me');
-userData
-  .then(data => {
-    userProfile.setUserInfo(data);
+const cardList = api.getData('cards/');
+Promise.all([userData, cardList])
+  .then(([user, cards]) => {
+  userProfile.setUserInfo(user);
+  section.renderItems(cards);
   })
   .catch((err) => {
     console.log(err);
   });
-
-// Загрузка карточек
-api.getData('cards/')
-  .then((data) => {
-  section.renderItems(data);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-
-  //const accountPromoses = [userData, cardListApi]
-  //Promise.all(accountPromoses)
-    //then(data => {
-      //console.log(data);
-    //})
 
 popupFormEdit.setEventListeners();
 popupFormAddCard.setEventListeners();
