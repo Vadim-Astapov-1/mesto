@@ -28,7 +28,7 @@ import {
   config
 } from '../utils/constants.js'
 
-let userId = null; // Измененный в then userId можно будет вставить дальше только в then!
+let userId = null;
 
 // Экземпляры валидированных форм
 const validatorEditForm = new FormValidator(config, '.popup__form_type_edit');
@@ -48,7 +48,7 @@ function createCard(configCard, cardSelector, id) {
     },
     handleCardLike: (evt) => {
       if(!evt.target.classList.contains('element__like-button_active')) {
-        api.putData('cards/likes/', configCard._id)
+        api.putLike(configCard._id)
         .then((res) => {
           evt.target.classList.add('element__like-button_active');
           cardElement.querySelector('.element__like-count').textContent = res.likes.length;
@@ -58,7 +58,7 @@ function createCard(configCard, cardSelector, id) {
         });
       }
       if(evt.target.classList.contains('element__like-button_active')) {
-        api.deleteData('cards/likes/', configCard._id)
+        api.deleteLike(configCard._id)
         .then((res) => {
           evt.target.classList.remove('element__like-button_active');
           cardElement.querySelector('.element__like-count').textContent = res.likes.length;
@@ -72,7 +72,7 @@ function createCard(configCard, cardSelector, id) {
       popupConfirm.open();
       // вставляем какую ходим функцию
       popupConfirm.handelFunction(() => {
-        api.deleteData('cards/', configCard._id)
+        api.deleteCard(configCard._id)
         .then(() => {
           cardElement.remove();
         })
@@ -120,7 +120,7 @@ const getValuesProfile = () => {
 const popupFormEditAvatar = new PopupWithForm(
   editAvatarPopup,
   (avatarData) => {
-    api.patchData('users/me/avatar', avatarData)
+    api.editAvatar(avatarData)
       .then(data => {
         userProfile.setUserInfo(data);
       })
@@ -139,7 +139,7 @@ const popupFormEditAvatar = new PopupWithForm(
 const popupFormEdit = new PopupWithForm(
   editPopup,
   (dataForm) => {
-    api.patchData('users/me', dataForm)
+    api.editProfile(dataForm)
       .then(data => {
         userProfile.setUserInfo(data);
       })
@@ -158,9 +158,8 @@ const popupFormEdit = new PopupWithForm(
 const popupFormAddCard = new PopupWithForm(
   addPopup,
   (dataForm) => {
-      api.addData('cards/', dataForm)
+      api.addCard(dataForm)
         .then((res) => {
-          // Вставляем измененный userId.
           section.renderItems([res]);
         })
         .then(() => {
@@ -180,8 +179,8 @@ const popupWithCard = new PopupWithImage(cardPopup);
 const popupConfirm = new PopupConfirm(confirmPopup);
 
 // Загрузка профиля
-const userData = api.getData('users/me');
-const cardList = api.getData('cards/');
+const userData = api.getUserData();
+const cardList = api.getCards();
 Promise.all([userData, cardList])
   .then(([user, cards]) => {
   userId = user._id;
