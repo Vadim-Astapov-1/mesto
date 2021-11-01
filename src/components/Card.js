@@ -14,13 +14,11 @@ export default class Card {
 
   // Проверка. Если уже лайкнул карту, пусть кнопка лайка будет активной
   _checkIsLiked() {
-    this._userApi.then(res => {
       this._data.likes.some(item => {
-        if(item._id === res._id) {
+        if(item._id === this._userApi) {
           this._element.querySelector('.element__like-button').classList.add('element__like-button_active');
         }
       })
-    });
   }
 
   _getTemplate() {

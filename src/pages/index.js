@@ -28,6 +28,8 @@ import {
   config
 } from '../utils/constants.js'
 
+let userId = null; // Измененный в then userId можно будет вставить дальше только в then!
+
 // Экземпляры валидированных форм
 const validatorEditForm = new FormValidator(config, '.popup__form_type_edit');
 const validatorAddForm = new FormValidator(config, '.popup__form_type_add');
@@ -38,7 +40,7 @@ validatorEditForm.enableValidation();
 validatorAddForm.enableValidation();
 validatorAvatarForm.enableValidation();
 
-function createCard(configCard, cardSelector) {
+function createCard(configCard, cardSelector, id) {
   const cardElement = new Card({
     data: configCard,
     handleCardClick: () => {
@@ -82,14 +84,14 @@ function createCard(configCard, cardSelector) {
         });
       });
     }
-  }, cardSelector, userData).generateCard();
+  }, cardSelector, id).generateCard();
 
   return cardElement;
 }
 
 const section = new Section({
   renderer: (item) => {
-    section.addItem(createCard(item, '.element-template'));
+    section.addItem(createCard(item, '.element-template', userId));
   },
 }, elements);
 
@@ -158,6 +160,7 @@ const popupFormAddCard = new PopupWithForm(
   (dataForm) => {
       api.addData('cards/', dataForm)
         .then((res) => {
+          // Вставляем измененный userId.
           section.renderItems([res]);
         })
         .then(() => {
@@ -181,6 +184,7 @@ const userData = api.getData('users/me');
 const cardList = api.getData('cards/');
 Promise.all([userData, cardList])
   .then(([user, cards]) => {
+  userId = user._id;
   userProfile.setUserInfo(user);
   section.renderItems(cards);
   })
